@@ -11,6 +11,7 @@ Where continent is not null
 order by 3,4;
 
 
+-------------------------------------------------------------------------------
 -- Select Data that we are going to be starting with
 
 Select Location,Date,total_cases,new_cases,total_deaths,population
@@ -19,6 +20,7 @@ Where continent is not null
 order by 1,2;
 
 
+-------------------------------------------------------------------------------
 -- Total Cases vs Total Deaths
 -- Shows likelihood of dying if you contract covid in your country
 
@@ -29,6 +31,7 @@ and continent is not null
 order by 1,2;
 
 
+-------------------------------------------------------------------------------
 -- Total Cases vs Population
 -- Shows what percentage of population infected with Covid
 
@@ -38,6 +41,7 @@ From [Covid]..[CovidDeaths$]
 order by 1,2;
 
 
+-------------------------------------------------------------------------------
 -- Countries with Highest Infection Rate compared to Population
 
 Select Location,population,max(total_cases) as HighestInfectionRate,Max((total_cases/population))*100 as HighestPercentofPopulaionInfected
@@ -46,6 +50,7 @@ Group by location,population
 order by HighestPercentofPopulaionInfected desc
   
 
+-------------------------------------------------------------------------------
 -- Countries with Highest Death Count per Population
 
 Select Location,max(Cast(total_deaths as int)) as totalDeathCount
@@ -55,6 +60,7 @@ Group by location
 order by totalDeathCount desc
   
 
+-------------------------------------------------------------------------------
 -- BREAKING THINGS DOWN BY CONTINENT
 
 -- Showing contintents with the highest death count per population
@@ -65,7 +71,8 @@ where continent is not null
 Group by continent
 order by totalDeathCount desc
 
-  
+
+-------------------------------------------------------------------------------  
 --Global numbers
 
 Select sum(new_cases) as totalCases, Sum(cast(new_deaths as int))as totaldeaths,Sum(cast(new_deaths as int))/sum(new_cases) *100 as GlobalDeathPercentage
@@ -74,7 +81,8 @@ where continent is not null
 --Group by date
 order by 1,2
 
-  
+
+-------------------------------------------------------------------------------  
 -- Total Population vs Vaccinations
 -- Shows Percentage of Population that has recieved at least one Covid Vaccine
 
@@ -87,7 +95,8 @@ join Covid..CovidVaccinations$ vac
 where dea.continent is not null
 order by 2,3
 
-  
+
+-------------------------------------------------------------------------------  
 -- Using CTE to perform Calculation on Partition By in previous query
 
 With PopVsVac (Continent, location, date, population, new_vaccination, Roolingpeoplevaccinated)
@@ -106,6 +115,7 @@ select *, (Roolingpeoplevaccinated/population)*100
 from PopVsVac
 
 
+-------------------------------------------------------------------------------  
 -- Using Temp Table to perform Calculation on Partition By in previous query
 
 Create table #PerPopulationVaccinated
@@ -130,6 +140,7 @@ select *, (Roolingpeoplevaccinated/population)*100
 from #PerPopulationVaccinated
 
 
+-------------------------------------------------------------------------------  
 -- Creating View to store data for later visualizations
 
 create view PerPopulationVaccinated as
