@@ -1,0 +1,151 @@
+
+--Clensing Fact Internet Sales table--
+
+
+SELECT [ProductKey]
+      ,[OrderDateKey]
+      ,[DueDateKey]
+      ,[ShipDateKey]
+      ,[CustomerKey]
+      --,[PromotionKey]
+      --,[CurrencyKey]
+      --,[SalesTerritoryKey]
+      ,[SalesOrderNumber]
+      --,[SalesOrderLineNumber]
+      --,[RevisionNumber]
+      --,[OrderQuantity]
+     -- ,[UnitPrice]
+      --,[ExtendedAmount]
+      --,[UnitPriceDiscountPct]
+      --,[DiscountAmount]
+      --,[ProductStandardCost]
+      --,[TotalProductCost]
+      ,[SalesAmount]
+      --,[TaxAmt]
+      --,[Freight]
+      --,[CarrierTrackingNumber]
+      --,[CustomerPONumber]
+      --,[OrderDate]
+      --,[DueDate]
+      --,[ShipDate]
+  FROM [AdventureWorksDW2022].[dbo].[FactInternetSales]
+
+Where left(OrderDateKey,4) >= YEAR(GetDate()) - 2 -- Ensure we always bring 2years of data from extraction
+order by OrderDateKey asc
+
+-----------------------------------------------------------------------
+
+--Clensing Dim Product table--
+
+      
+SELECT  [ProductKey]
+      ,[ProductAlternateKey] As ProductItemCode
+      --,[ProductSubcategoryKey]
+      --,[WeightUnitMeasureCode]
+      --,[SizeUnitMeasureCode]
+      ,[EnglishProductName] As ProductName
+      --,[SpanishProductName]
+      --,[FrenchProductName]
+      --,[StandardCost]
+      --,[FinishedGoodsFlag]
+      ,[Color] As ProductColor
+      --,[SafetyStockLevel]
+      --,[ReorderPoint]
+      --,[ListPrice]
+      ,[Size] As ProductSize
+      --,[SizeRange]
+      --,[Weight]
+      --,[DaysToManufacture]
+      ,[ProductLine] As ProductLine
+      --,[DealerPrice]
+      --,[Class]
+      --,[Style]
+      ,[ModelName] As ProductModelName
+      --,[LargePhoto]
+      ,[EnglishDescription] as ProductDescription
+      --,[FrenchDescription]
+      --,[ChineseDescription]
+      --,[ArabicDescription]
+      --,[HebrewDescription]
+      --,[ThaiDescription]
+      --,[GermanDescription]
+      --,[JapaneseDescription]
+      --,[TurkishDescription]
+      --,[StartDate]
+      --,[EndDate]
+      ,ISNULL(Status, 'Outdated') As ProductStatus
+	  , EnglishProductSubcategoryName As SubCategory -- joined sub categoryname form Porductsubcategory table
+	  ,EnglishProductCategoryName as Category --joined sub categoryname form Porductcategory table
+  FROM [AdventureWorksDW2022].[dbo].[DimProduct] as p
+  left join DimProductSubcategory as ps on p.ProductSubcategoryKey=ps.ProductSubcategoryKey
+  left join DimProductCategory as pc on ps.ProductCategoryKey =pc.ProductCategoryKey
+  order by ProductKey asc
+
+
+-----------------------------------------------------------------------
+
+--Cleaning Dim Customer table--
+SELECT [CustomerKey] 
+      --,[GeographyKey]
+      --,[CustomerAlternateKey]
+      --,[Title]
+      ,[FirstName]
+      --,[MiddleName]
+      ,[LastName]
+	  ,FirstName+' ' + LastName As Fullname
+      --,[NameStyle]
+      --,[BirthDate]
+      --,[MaritalStatus]
+      --,[Suffix]
+      ,[Gender]
+      --,[EmailAddress]
+      --,[YearlyIncome]
+      --,[TotalChildren]
+      --,[NumberChildrenAtHome]
+      ----,[EnglishEducation]
+      --,[SpanishEducation]
+      --,[FrenchEducation]
+      --,[EnglishOccupation]
+      --,[SpanishOccupation]
+      --,[FrenchOccupation]
+      --,[HouseOwnerFlag]
+      --,[NumberCarsOwned]
+      --,[AddressLine1]
+      --,[AddressLine2]
+      --,[Phone]
+      ,[DateFirstPurchase]
+      ,[CommuteDistance]
+	  , City as Customercity -- joined city from dim geography table
+  FROM [dbo].[DimCustomer]as c
+  left join [DimGeography] as g
+  on g.GeographyKey = c.GeographyKey
+  order by CustomerKey asc -- ordered list by Customerkey
+
+      
+-----------------------------------------------------------------------
+
+
+-- cleaning dim date--
+SELECT [DateKey]
+      ,[FullDateAlternateKey] As Date
+      --,[DayNumberOfWeek]
+      ,[EnglishDayNameOfWeek] As Day
+      --,[SpanishDayNameOfWeek]
+      --,[FrenchDayNameOfWeek]
+      --,[DayNumberOfMonth]
+      --,[DayNumberOfYear]
+      ,[WeekNumberOfYear] As WeekNo
+      ,[EnglishMonthName]As Month,
+	  left(EnglishMonthName,3) as MonthShort
+      --,[SpanishMonthName]
+      --,[FrenchMonthName]
+      ,[MonthNumberOfYear] As MonthNo
+      ,[CalendarQuarter] As Quarter
+      ,[CalendarYear] As Year
+      --,[CalendarSemester]
+      --,[FiscalQuarter]
+      --,[FiscalYear]
+      --,[FiscalSemester]
+  FROM [AdventureWorksDW2022].[dbo].[DimDate]
+  where CalendarYear >= 2021
+
