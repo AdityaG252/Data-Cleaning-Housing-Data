@@ -1,3 +1,10 @@
+/*
+Adventure Works Sales Data Clensing
+
+Skills used: Clensing Tables by removing unwaned coulmns, Joins
+
+*/
+
 
 --Clensing Fact Internet Sales table--
 
@@ -74,8 +81,8 @@ SELECT  [ProductKey]
       --,[StartDate]
       --,[EndDate]
       ,ISNULL(Status, 'Outdated') As ProductStatus
-	  , EnglishProductSubcategoryName As SubCategory -- joined sub categoryname form Porductsubcategory table
-	  ,EnglishProductCategoryName as Category --joined sub categoryname form Porductcategory table
+      , EnglishProductSubcategoryName As SubCategory -- joined sub categoryname form Porductsubcategory table
+      ,EnglishProductCategoryName as Category --joined sub categoryname form Porductcategory table
   FROM [AdventureWorksDW2022].[dbo].[DimProduct] as p
   left join DimProductSubcategory as ps on p.ProductSubcategoryKey=ps.ProductSubcategoryKey
   left join DimProductCategory as pc on ps.ProductCategoryKey =pc.ProductCategoryKey
@@ -92,7 +99,7 @@ SELECT [CustomerKey]
       ,[FirstName]
       --,[MiddleName]
       ,[LastName]
-	  ,FirstName+' ' + LastName As Fullname
+      ,FirstName+' ' + LastName As Fullname
       --,[NameStyle]
       --,[BirthDate]
       --,[MaritalStatus]
@@ -115,7 +122,7 @@ SELECT [CustomerKey]
       --,[Phone]
       ,[DateFirstPurchase]
       ,[CommuteDistance]
-	  , City as Customercity -- joined city from dim geography table
+      , City as Customercity -- joined city from dim geography table
   FROM [dbo].[DimCustomer]as c
   left join [DimGeography] as g
   on g.GeographyKey = c.GeographyKey
@@ -135,8 +142,8 @@ SELECT [DateKey]
       --,[DayNumberOfMonth]
       --,[DayNumberOfYear]
       ,[WeekNumberOfYear] As WeekNo
-      ,[EnglishMonthName]As Month,
-	  left(EnglishMonthName,3) as MonthShort
+      ,[EnglishMonthName]As Month
+      ,left(EnglishMonthName,3) as MonthShort
       --,[SpanishMonthName]
       --,[FrenchMonthName]
       ,[MonthNumberOfYear] As MonthNo
